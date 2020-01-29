@@ -1,61 +1,54 @@
-import React from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
+import './styles.css';
 
-class Login extends React.Component {
-    state = {
-        credentials: {
-            username: '',
-            password: ''
-        }
-    };
+const Login = props => {
+  // console.log(props)
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
 
-    handleChange = e => {
-        this.setState ({
-            credentials: {
-                ...this.state.credentials,
-                [e.target.name]: e.target.value
-            }
-        });
-    };
+  const handleChange = e => {
+    setCredentials({
+      ...credentials,
+      [e.target.name]: e.target.value
+    })
+    // console.log(credentials);
+  }
 
-    login = e => {
-        e.preventDefault();
+  const handleSubmit = e => {
+    e.preventDefault();
+    axios.post(`http://localhost:5000/api/login`, credentials)
+      .then(res =>
+        localStorage.setItem('token', res.data.payload),
+        props.history.push(`/dashboard`)
+      )
+      .catch(err => console.log(err));
+    setCredentials({ username: '', password: '' })
+  }
 
-        axios
-        .post('http://localhost:5000/api/login', this.state.credentials)
-        .then(res => {
-            localStorage.setItem('token', res.data.payload);
-            this.props.history.push('/api/friends');
-        })
-        .catch(err => console.log(err));
-    };
-
-    render() {
-        return (
-            <div>
-                <form onSubmit={this.login}>
-                    <input
-                      placeholder="Enter Username"
-                      type = "text"
-                      name = "username"
-                      value = {this.state.credentials.username}
-                      onChange = {this.handleChange}
-                    />
-
-                    <input
-                      placeholder="Enter Password"
-                      type = "password"
-                      name = "password"
-                      value = {this.state.credentials.password}
-                      onChange = {this.handleChange}
-                    />
-
-                    <button type="submit" onClick={this.login}>Log In</button>
-
-                </form>
-            </div>
-        );
-    }
+  return (
+    <div>
+      <form className='flex' onSubmit={handleSubmit}>
+        <h2 className='spaces'>Login form</h2>
+        <label>Username</label>
+        <input
+          className='spaces'
+          type='text'
+          name='username'
+          onChange={handleChange}
+          value={credentials.username}
+        />
+        <label>Password</label>
+        <input
+          className='spaces'
+          type='password'
+          name='password'
+          onChange={handleChange}
+          value={credentials.password}
+        />
+        <button className='spaces'>Log In</button>
+      </form>
+    </div>
+  )
 }
 
-export default Login;
+export default Login

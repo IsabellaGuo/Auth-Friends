@@ -25,7 +25,7 @@ class Login extends React.Component {
         .post('http://localhost:5000/api/login', this.state.credentials)
         .then(res => {
             localStorage.setItem('token', res.data.payload);
-            this.props.history.push('/protected');
+            this.props.history.push('/api/friends');
         })
         .catch(err => console.log(err));
     };
@@ -35,6 +35,7 @@ class Login extends React.Component {
             <div>
                 <form onSubmit={this.login}>
                     <input
+                      placeholder="Enter Username"
                       type = "text"
                       name = "username"
                       value = {this.state.credentials.username}
@@ -42,13 +43,14 @@ class Login extends React.Component {
                     />
 
                     <input
+                      placeholder="Enter Password"
                       type = "password"
                       name = "password"
                       value = {this.state.credentials.password}
                       onChange = {this.handleChange}
                     />
 
-                    <button>Log In</button>
+                    <button type="submit" onClick={this.login}>Log In</button>
 
                 </form>
             </div>
